@@ -1,49 +1,54 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderManagement.Entity;
 using OrderManagement.IRepository;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OrderManagement.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly orderDBContext _orderDBContext;
-        public ProductRepository(orderDBContext orderDBContext) 
-        {
-            _orderDBContext = orderDBContext;
-        }
+        private readonly orderDBContext _orderDbContext;
 
+        public ProductRepository(orderDBContext orderDbContext)
+        {
+            _orderDbContext = orderDbContext;
+        }
 
         public async Task AddProduct(Product product)
         {
-            _orderDBContext.Products.Add(product);
-            await _orderDBContext.SaveChangesAsync();
+            await _orderDbContext.Products.AddAsync(product);
+            await _orderDbContext.SaveChangesAsync();
         }
 
         public async Task<Product> GetProductById(int id)
         {
-            return await _orderDBContext.Products.FindAsync(id);
+            return await _orderDbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<Product>> GetAllProducts()
         {
-            return await _orderDBContext.Products.ToListAsync();
+            return await _orderDbContext.Products.ToListAsync();
         }
 
         public async Task UpdateProduct(Product product)
         {
-            _orderDBContext.Products.Update(product);
-            await _orderDBContext.SaveChangesAsync();
+            var existingProduct = await _orderDbContext.Products.FindAsync(product.Id);
+            if (existingProduct != null)
+            {
+                _orderDbContext.Entry(existingProduct).CurrentValues.SetValues(product);
+                await _orderDbContext.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteProduct(int id)
         {
-            var product = await _orderDBContext.Products.FindAsync(id);
+            var product = await _orderDbContext.Products.FindAsync(id);
             if (product != null)
             {
-                _orderDBContext.Products.Remove(product);
-                await _orderDBContext.SaveChangesAsync();
+                _orderDbContext.Products.Remove(product);
+                await _orderDbContext.SaveChangesAsync();
             }
         }
-
     }
 }

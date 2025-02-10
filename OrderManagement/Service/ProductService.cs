@@ -2,16 +2,18 @@
 using OrderManagement.Entity;
 using OrderManagement.IRepository;
 using OrderManagement.IService;
-using OrderManagement.Repository;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OrderManagement.Service
 {
     public class ProductService : IProductServicecs
     {
         private readonly IProductRepository _productRepository;
-        public ProductService(IProductRepository product)
+
+        public ProductService(IProductRepository productRepository)
         {
-            _productRepository = product;
+            _productRepository = productRepository;
         }
 
         public async Task<IEnumerable<Product>> GetAllProducts()
@@ -26,16 +28,17 @@ namespace OrderManagement.Service
 
         public async Task AddProduct(ProductRequest productRequestDTO)
         {
-            var product = new Product();
+            var product = new Product
+            {
+                Name = productRequestDTO.Name,
+                Price = productRequestDTO.Price,
+                Category = productRequestDTO.Category,
+                Description = productRequestDTO.Description,
+                stock = productRequestDTO.stock,
+                CreatedAt = DateTime.UtcNow
+            };
 
-            product.Name = productRequestDTO.Name;
-            product.Price = productRequestDTO.Price;
-            product.Category = productRequestDTO.Category;
-            product.Description = productRequestDTO.Description;
-            product.stock = productRequestDTO.stock;
-            product.CreatedAt = DateTime.UtcNow;
-
-            var productData = _productRepository.AddProduct(product);
+            await _productRepository.AddProduct(product);
         }
 
         public async Task UpdateProductAsync(ProductRequest productRequestDTO, int id)
@@ -62,7 +65,5 @@ namespace OrderManagement.Service
                 await _productRepository.DeleteProduct(id);
             }
         }
-
-        
     }
 }
