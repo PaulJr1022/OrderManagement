@@ -19,6 +19,12 @@ builder.Services.AddDbContext<orderDBContext>(opt => opt.UseSqlServer(builder.Co
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
+builder.Services.AddScoped<IProductServicecs, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 
 var app = builder.Build();
 

@@ -84,7 +84,7 @@ namespace OrderManagement.Controllers
         //        return NotFound(new { message = "Customer not found" });
         //    }
         //}
-        [HttpGet]
+        [HttpGet("GetAllCustomer")]
         public async Task<IActionResult> GetAll()
         {
             var exsitingCustomers = await _customerService.GetAllCustomersAsync();
@@ -101,7 +101,7 @@ namespace OrderManagement.Controllers
             return Ok(customer);
         }
 
-        [HttpPost]
+        [HttpPost("CreateCustomer")]
         public async Task<IActionResult> Create(CustomerRequest customerRequestDTO)
         {
             await _customerService.AddCustomerAsync(customerRequestDTO);
